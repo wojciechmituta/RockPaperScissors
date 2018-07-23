@@ -1,84 +1,44 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class RpsRunner {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InputMismatchException {
+        Scanner scanner = new Scanner(System.in);
+        UserDialogs.printMenu();
+
+        int numberOfRounds = UserDialogs.getNumberOfRound();
+
         boolean end = false;
-        int winn = 0;
+        int win = 0;
         int loss = 0;
 
-        System.out.println("Welcome to the game Paper Rock Scissors \n" + "Please get your Name");
-
-        Scanner scanner = new Scanner(System.in);
-
-        String name = scanner.nextLine();
-
-        System.out.println("Hallo " + name + " please enter number of rounds");
-
-        int numberOfRounds = scanner.nextInt();
-
-        System.out.println("Game instruction: \n" +
-                "input Rock - play Rock \n" +
-                "input Paper - play paper \n" +
-                "input Scissors - play Scissors \n" +
-                "input x = end of game \n" +
-                "input n - new game ");
+        Game game = new Game();
 
         while (!end) {
 
-            while (winn < numberOfRounds && loss < numberOfRounds) {
+            while (win < numberOfRounds && loss < numberOfRounds) {
                 System.out.println("\n Input your choice:");
                 String moveOfPlayer = scanner.next();
-                Choice choice = Choice.valueOf(moveOfPlayer.toUpperCase());
-                Game game = new Game();
-                Result result = game.checkResult(choice);
-
-                if (result == Result.WINN) {
-                    winn++;
+                if (moveOfPlayer.toUpperCase().equals("ROCK") || moveOfPlayer.toUpperCase().equals("PAPER") || moveOfPlayer.toUpperCase().equals("SCISSORS")) {
+                    Choice choice = Choice.valueOf(moveOfPlayer.toUpperCase());
+                    Result result = game.checkResult(choice);
+                    if (result == Result.WIN) {
+                        win++;
+                    }
+                    if (result == Result.LOSS) {
+                        loss++;
+                    }
+                    System.out.println("\n Your result: " + win + "       " + "Computer result: " + loss);
+                } else {
+                    System.out.println("You entered incorrect data, please try again");
                 }
-                if (result == Result.LOSS) {
-                    loss++;
-                }
-                System.out.println("\n Your result: " + winn + "       " + "Computer result: " + loss);
             }
 
-            getResult(winn, loss, numberOfRounds);
-            winn = 0;
+            UserDialogs.getResult(win, loss, numberOfRounds);
+            win = 0;
             loss = 0;
-            end = isEnd(end, scanner);
+            end = UserDialogs.isEnd();
         }
-    }
-
-    private static boolean isEnd(boolean end, Scanner scanner) {
-        String finish = scanner.next();
-        if (finish.toUpperCase().equals("X")) {
-            System.out.println("Are you sure? press y");
-            String exit = scanner.next();
-            if (exit.toUpperCase().equals("Y")) {
-                end = true;
-            } else {
-                end = false;
-            }
-        }
-        if (finish.toUpperCase().equals("N")) {
-            System.out.println("Are you sure? press y");
-            String exit = scanner.next();
-            if (exit.toUpperCase().equals("Y")) {
-                end = false;
-            } else {
-                end = true;
-            }
-        }
-        return end;
-    }
-
-    private static void getResult(int winn, int loss, int numberOfRounds) {
-        if (winn == numberOfRounds) {
-            System.out.println("\n You winn, congratulations");
-        }
-        if (loss == numberOfRounds) {
-            System.out.println("\n You lost, try again!");
-        }
-        System.out.println("If you want to end the game press X, if you want try again press N");
     }
 }
